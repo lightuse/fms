@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: FMS Core API
+  version: 0.1.0
+  description: >-
+    API surface for MVP core workflows: incidents, units, dispatches, realtime notifications.
+    Tenant propagation is handled via a validated JWT claim `tenant_id` (middleware MUST set DB session
+    tenant from this claim). See spec: `specs/001-fms-core/spec.md` for details.
+servers:
+  - url: http://localhost:3000/api
+security:
+  - bearerAuth: []
+paths:
+  /v1/incidents:
+    post:
+      summary: Create an incident
+      tags: [Incidents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [location_text, type, severity]
+              properties:
+                location_text:
+                  type: string
+                location:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                    lon:
+                      type: number
+                type:
+                  type: string
+                severity:
+                  type: string
+                notes:
+                  type: string
+      responses:
+        '201':
+          description: Incident created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+  /v1/incidents/{id}/dispatch:
+    post:
+      summary: Dispatch a unit to an incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unit_id:
+                  type: string
+      responses:
+        '200':
+          description: Dispatch accepted
+  /v1/units:
+    get:
+      summary: List units (filter by proximity)
+      parameters:
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lon
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: List of units
+components:
+  schemas:
+    Incident:
+      type: object
+      properties:
+        id:
+          type: string
+        location_text:
+          type: string
+        location:
+          type: object
+          properties:
+            lat:
+              type: number
+            lon:
+              type: number
+        type:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >-
+        JWT bearer token. Token MUST be validated (issuer/audience/expiry) and MUST include
+        `tenant_id` claim containing the UUID of the tenant. The application middleware is
+        responsible for setting the DB session tenant (e.g. `SELECT fms_set_current_tenant(...)`).
