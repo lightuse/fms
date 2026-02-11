@@ -1,0 +1,98 @@
+openapi: 3.0.3
+info:
+  title: FMS Core MVP API Contract
+  version: 1.0.0
+paths:
+  /incidents:
+    post:
+      summary: Create an incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncidentCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncidentResponse'
+  /incidents/{id}/assign:
+    post:
+      summary: Assign units to an incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRequest'
+      responses:
+        '200':
+          description: Assignment result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  incidentId:
+                    type: string
+                    format: uuid
+                  assigned:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+components:
+  schemas:
+    IncidentCreate:
+      type: object
+      required:
+        - location
+      properties:
+        location:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Point]
+            coordinates:
+              type: array
+              items:
+                type: number
+        location_text:
+          type: string
+        type:
+          type: string
+        severity:
+          type: string
+        notes:
+          type: string
+    IncidentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+    AssignRequest:
+      type: object
+      required: [unitIds]
+      properties:
+        unitIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        actorId:
+          type: string
+          format: uuid
