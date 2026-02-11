@@ -1,0 +1,65 @@
+name: DB Migrations & RLS + Backend Build
+
+on:
+  pull_request:
+    branches: [ main, 'feature/**' ]
+
+jobs:
+  db-and-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres" --health-interval=5s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install psql client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U postgres && break || sleep 1
+          done
+
+      - name: Create database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -c "CREATE DATABASE fms;" || echo "db exists"
+
+      - name: Apply SQL migrations
+        env:
+          PSQL_CONN: postgresql://postgres:postgres@localhost:5432/fms
+        run: |
+          set -euo pipefail
+          for f in specs/001-fms-core/db/*.sql; do
+            echo "Applying $f";
+            psql "$PSQL_CONN" -f "$f";
+          done
+
+      - name: Run RLS smoke tests
+        env:
+          PSQL_CONN: postgresql://postgres:postgres@localhost:5432/fms
+        run: |
+          chmod +x specs/001-fms-core/db/run_rls_tests.sh
+          specs/001-fms-core/db/run_rls_tests.sh
+
+      - name: Build backend
+        working-directory: backend
+        run: |
+          npm ci
+          npm run build
