@@ -1,6 +1,8 @@
 import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { IncidentsController } from './incidents/incidents.controller';
 import { IncidentsService } from './incidents/incidents.service';
+import { UnitsController } from './units/units.controller';
+import { UnitsService } from './units/units.service';
 import { TenantMiddleware } from './middleware/tenant.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Incident } from './incidents/incident.entity';
@@ -16,7 +18,8 @@ import { Incident } from './incidents/incident.entity';
     TypeOrmModule.forFeature([Incident]),
   ],
   controllers: [IncidentsController],
-  providers: [IncidentsService],
+  controllers: [IncidentsController, UnitsController],
+  providers: [IncidentsService, UnitsService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

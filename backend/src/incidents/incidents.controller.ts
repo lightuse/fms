@@ -1,5 +1,5 @@
 
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { IncidentsService } from './incidents.service';
 import { CreateIncidentDto } from './dto/create-incident.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -21,5 +21,11 @@ export class IncidentsController {
   @ApiResponse({ status: 201, description: 'Created incident' })
   async create(@Body() body: CreateIncidentDto) {
     return this.svc.create(body);
+  }
+
+  @Post(':id/assign')
+  @ApiOperation({ summary: 'Assign units to an incident' })
+  async assign(@Param('id') id: string, @Body() body: { unitIds: string[]; actorId?: string }) {
+    return this.svc.assignUnits(id, body.unitIds, body.actorId);
   }
 }
