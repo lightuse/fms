@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { io, Socket } from 'socket.io-client'
+import UnitDetail from '../components/UnitDetail'
 
 type Unit = { id: string; name: string; lat: number; lng: number }
 
@@ -13,6 +14,7 @@ const initialUnits: Unit[] = [
 export default function UnitMap() {
   const [units, setUnits] = useState<Unit[]>(initialUnits)
   const [connected, setConnected] = useState(false)
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null)
 
   useEffect(() => {
     const wsEndpoint = (import.meta.env.VITE_WS_ENDPOINT as string) || '/ws'
@@ -55,17 +57,25 @@ export default function UnitMap() {
     }
   }, [])
 
-  return (
+    return (
     <div className="unit-map">
       <h2>Units {connected ? '(live)' : '(disconnected)'}</h2>
       <MapContainer center={[35.05, 135.05]} zoom={11} style={{ height: '400px' }}>
         <TileLayer url={(import.meta.env.VITE_MAP_TILE_URL as string) || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
         {units.map(u => (
-          <Marker key={u.id} position={[u.lat, u.lng]}>
+          <Marker key={u.id} position={[u.lat, u.lng]} eventHandlers={{ click: () => setSelectedUnit(u) }}>
             <Popup>{u.name}</Popup>
           </Marker>
         ))}
       </MapContainer>
+
+      {selectedUnit && (
+        <UnitDetail unit={selectedUnit} onClose={() => setSelectedUnit(null)} onAssign={() => {
+          // placeholder: emit assign action to socket or open dispatch flow
+          // In future: open assignment modal and call POST /dispatch
+          console.log('Assign requested for', selectedUnit.id)
+        }} />
+      )}
     </div>
   )
 }

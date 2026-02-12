@@ -15,3 +15,6 @@ body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0}
 .modal-footer{padding:12px 16px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end}
 .close{background:transparent;border:0;font-size:20px;cursor:pointer}
 .btn-primary{background:#0b5;color:#012;border:0;padding:8px 12px;border-radius:4px;cursor:pointer}
+
+/* Unit detail specific tweaks (reuse modal styles) */
+.unit-map .modal{max-width:480px}
