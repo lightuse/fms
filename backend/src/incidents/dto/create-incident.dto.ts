@@ -3,17 +3,17 @@ import { Type } from 'class-transformer';
 
 class PointDto {
   @IsString()
-  type: string;
+  type!: string;
 
   @IsOptional()
   @IsObject()
-  coordinates: any;
+  coordinates?: any;
 }
 
 export class CreateIncidentDto {
   @ValidateNested()
   @Type(() => PointDto)
-  location: PointDto;
+  location!: PointDto;
 
   @IsOptional()
   @IsString()

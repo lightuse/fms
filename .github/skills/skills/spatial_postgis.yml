@@ -1,0 +1,9 @@
+id: spatial_postgis
+name: Spatial / PostGIS
+description: |
+  PostGIS 拡張の設定、空間データ型、ジオメトリ操作、空間インデックスと空間クエリの実装例。
+owner: database-team
+related_files:
+  - db/migrations/0001_enable_postgis.sql
+  - src/db.ts
+tags: [postgis, spatial, db]

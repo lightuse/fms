@@ -1,0 +1,9 @@
+id: security_auth
+name: Security / Auth
+description: |
+  認証・認可（Keycloak 等）の構成、テスト用スタブ、セキュリティチェックリストとベストプラクティス。
+owner: security-team
+related_files:
+  - src/auth/
+  - specs/001-fms-core/checklists/security.md
+tags: [auth, security, keycloak]

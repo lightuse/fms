@@ -1,0 +1,12 @@
+[
+  {"id":"spatial_postgis","file":"skills/spatial_postgis.yml"},
+  {"id":"database_migrations","file":"skills/database_migrations.yml"},
+  {"id":"tenant_rls","file":"skills/tenant_rls.yml"},
+  {"id":"incidents_api","file":"skills/incidents_api.yml"},
+  {"id":"dispatch_transactions","file":"skills/dispatch_transactions.yml"},
+  {"id":"units_management","file":"skills/units_management.yml"},
+  {"id":"integration_testing","file":"skills/integration_testing.yml"},
+  {"id":"local_dev","file":"skills/local_dev.yml"},
+  {"id":"ci_cd","file":"skills/ci_cd.yml"},
+  {"id":"security_auth","file":"skills/security_auth.yml"}
+]

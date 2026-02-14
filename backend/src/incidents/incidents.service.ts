@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Incident } from './incident.entity';
 import { pool } from '../db';
 
 @Injectable()
 export class IncidentsService {
-  constructor(@InjectRepository(Incident) private repo: Repository<Incident>) {}
+  private repo!: Repository<Incident>;
+
+  constructor() {}
 
   async list() {
     return this.repo

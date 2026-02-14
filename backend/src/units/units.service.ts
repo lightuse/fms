@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { pool } from '../../db';
+import { pool } from '../db';
 
 @Injectable()
 export class UnitsService {

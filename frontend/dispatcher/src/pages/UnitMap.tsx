@@ -7,8 +7,8 @@ import UnitDetail from '../components/UnitDetail'
 type Unit = { id: string; name: string; lat: number; lng: number }
 
 const initialUnits: Unit[] = [
-  { id: 'u1', name: 'Unit 1', lat: 35.0, lng: 135.0 },
-  { id: 'u2', name: 'Unit 2', lat: 35.1, lng: 135.1 }
+  { id: 'u1', name: 'Unit 1', lat: 0.5, lng: 20.5 },
+  { id: 'u2', name: 'Unit 2', lat: 1.0, lng: 21.0 }
 ]
 
 export default function UnitMap() {
@@ -60,7 +60,7 @@ export default function UnitMap() {
     return (
     <div className="unit-map">
       <h2>Units {connected ? '(live)' : '(disconnected)'}</h2>
-      <MapContainer center={[35.05, 135.05]} zoom={11} style={{ height: '400px' }}>
+      <MapContainer center={[0, 20]} zoom={4} style={{ height: '400px' }}>
         <TileLayer url={(import.meta.env.VITE_MAP_TILE_URL as string) || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
         {units.map(u => (
           <Marker key={u.id} position={[u.lat, u.lng]} eventHandlers={{ click: () => setSelectedUnit(u) }}>

@@ -1,0 +1,9 @@
+id: units_management
+name: Units management
+description: |
+  ユニット（車両/チーム）データモデル、ステータス同期、GPS ピングの扱いと関連マイグレーション。
+owner: units-team
+related_files:
+  - db/migrations/0004_add_gps_pings.sql
+  - src/units/
+tags: [units, gps, sync]

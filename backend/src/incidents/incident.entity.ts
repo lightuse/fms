@@ -3,35 +3,35 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity({ name: 'incidents' })
 export class Incident {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'uuid' })
-  tenant_id: string;
+  tenant_id!: string;
 
   @Column({ type: 'uuid', nullable: true })
-  creator_id: string | null;
+  creator_id!: string | null;
 
   @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326, nullable: false })
-  location: any;
+  location!: any;
 
   @Column({ type: 'text', nullable: true })
-  location_text: string | null;
+  location_text!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  type: string | null;
+  type!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  severity: string | null;
+  severity!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  notes: string | null;
+  notes!: string | null;
 
   @Column({ type: 'text', nullable: false, default: 'Open' })
-  status: string;
+  status!: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
+  created_at!: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
+  updated_at!: Date;
 }

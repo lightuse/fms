@@ -13,7 +13,7 @@
 
 - Frontend: Next.js (React)
 
-- Mobile: Flutter (軽量スタブ実装で開始)
+- Mobile: React Native (軽量スタブ実装で開始)
 
 - DB: PostgreSQL 15+ with PostGIS
 
@@ -29,7 +29,7 @@
 - API 層: NestJS が REST/WS エンドポイントを提供。認証は Keycloak（OIDC）、各リクエストで JWT 検証を行いテナントを決定。
 - DB 層: PostGIS 拡張を有効化した PostgreSQL。RLS ポリシーでテナント分離、空間インデックス（GIST）で近傍検索を高速化。
 - リアルタイム: 指令イベントは Socket.IO 経由で配信。複数インスタンス環境では Redis Pub/Sub をブリッジに使用。
-- Mobile: Flutter スタブは Socket.IO または FCM 経由で通知を受け取り、GPS を定期送信。
+- Mobile: React Native スタブは Socket.IO または FCM 経由で通知を受け取り、GPS を定期送信。
 
 データモデル（ハイライト）
 - Tenant: id (uuid), name, settings

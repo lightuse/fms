@@ -22,7 +22,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config, { include: [IncidentsController] });
     SwaggerModule.setup('api/docs', app, document);
   } catch (e) {
-    console.warn('Swagger setup skipped:', e && e.message ? e.message : e);
+    console.warn('Swagger setup skipped:', (e as any)?.message ?? e);
   }
 
   await app.listen(process.env.PORT ? parseInt(process.env.PORT) : 3000);

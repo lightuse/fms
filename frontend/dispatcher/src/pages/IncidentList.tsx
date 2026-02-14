@@ -4,8 +4,8 @@ import IncidentDetail from '../components/IncidentDetail'
 type Incident = { id: number; title: string; time: string; location: string; priority?: string; status?: string; summary?: string }
 
 const mockIncidents: Incident[] = [
-  { id: 1, title: '火災 - 建物', time: '2026-02-13T10:00:00Z', location: '35.0,135.0', priority: 'high', status: 'open', summary: '建物の2階から煙が出ているとの通報' },
-  { id: 2, title: '救急 - 人', time: '2026-02-13T10:05:00Z', location: '35.1,135.1', priority: 'medium', status: 'open', summary: '倒れている人がいるとの通報' }
+  { id: 1, title: 'Building Fire', time: '2026-02-13T10:00:00Z', location: '0.5,20.5', priority: 'high', status: 'open', summary: 'Report of smoke on second floor of a building' },
+  { id: 2, title: 'Medical Emergency', time: '2026-02-13T10:05:00Z', location: '1.0,21.0', priority: 'medium', status: 'open', summary: 'Person reported collapsed' }
 ]
 
 export default function IncidentList() {

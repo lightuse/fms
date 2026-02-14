@@ -1,0 +1,76 @@
+name: 'PR Checklist Inserter'
+
+on:
+  pull_request_target:
+    types: [opened, edited, labeled, ready_for_review, synchronize]
+
+jobs:
+  insert-checklist:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Insert checklist into PR body based on labels
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Map label -> checklist file path in the repo
+            const labelToChecklist = {
+              'api': 'specs/002-fms-core-mvp/checklists/api.md',
+              'security': 'specs/002-fms-core-mvp/checklists/security.md',
+              'performance': 'specs/002-fms-core-mvp/checklists/performance.md'
+            };
+
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.info('No pull_request in payload, exiting.');
+              return;
+            }
+
+            const labels = (pr.labels || []).map(l => l.name);
+            core.info('PR labels: ' + labels.join(','));
+
+            let selectedPath = null;
+            for (const l of labels) {
+              if (labelToChecklist[l]) { selectedPath = labelToChecklist[l]; break; }
+            }
+            if (!selectedPath) {
+              core.info('No checklist mapping for PR labels; nothing to insert.');
+              return;
+            }
+
+            // Fetch file content
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const path = selectedPath;
+            let content;
+            try {
+              const resp = await github.rest.repos.getContent({ owner, repo, path });
+              const encoding = resp.data.encoding || 'base64';
+              const raw = Buffer.from(resp.data.content, encoding).toString('utf8');
+              content = raw;
+            } catch (e) {
+              core.error('Failed to read checklist file: ' + e.message);
+              return;
+            }
+
+            const marker = `<!-- CHECKLIST:${path} -->`;
+            const { data: currentPr } = await github.rest.pulls.get({ owner, repo, pull_number: pr.number });
+            let body = currentPr.body || '';
+            if (body.includes(marker)) {
+              core.info('Checklist already present in PR body.');
+              return;
+            }
+
+            // Append checklist at end
+            const appended = `\n\n${marker}\n\n${content}\n`;
+            const newBody = body + appended;
+
+            await github.rest.pulls.update({ owner, repo, pull_number: pr.number, body: newBody });
+            core.info('Inserted checklist from ' + path + ' into PR #' + pr.number);

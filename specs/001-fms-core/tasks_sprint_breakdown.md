@@ -28,7 +28,7 @@
 
  Sprint W6 — モバイル 基本連携
 
-- [ ] T039 [US2] Add Flutter mobile stub for receiving dispatch and updating status (`specs/001-fms-core/quickstart/mobile_stub/`)
+- [ ] T039 [US2] Add React Native mobile stub for receiving dispatch and updating status (`specs/001-fms-core/quickstart/mobile_stub/`)
 
 - [ ] T040 [US2] Implement GPS ping endpoint and persistence (`backend/src/controllers/units_controller.ts`)
 

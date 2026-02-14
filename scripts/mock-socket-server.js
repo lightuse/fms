@@ -9,6 +9,38 @@ const { Server } = require('socket.io')
 const PORT = process.env.MOCK_SOCKET_PORT || 4000
 
 const server = http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/dispatch') {
+    let body = ''
+    req.on('data', chunk => { body += chunk })
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body || '{}')
+        // expected: { incidentId, unitId }
+        const assignment = {
+          id: `a-${Date.now()}`,
+          incidentId: payload.incidentId,
+          unitId: payload.unitId,
+          status: 'assigned',
+          assignedAt: new Date().toISOString()
+        }
+
+        // update unit status and emit update
+        const idx = units.findIndex(u => u.id === payload.unitId)
+        if (idx !== -1) {
+          units[idx] = { ...units[idx], status: 'assigned' }
+          io.emit('unit:update', units[idx])
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(assignment))
+      } catch (err) {
+        res.writeHead(400)
+        res.end('invalid json')
+      }
+    })
+    return
+  }
+
   res.writeHead(200)
   res.end('mock socket server')
 })

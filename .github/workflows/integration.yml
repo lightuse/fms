@@ -1,0 +1,56 @@
+name: Integration Tests (PostGIS)
+
+on:
+  push:
+    branches: [ main, '002-*', '**/feature/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:13-3.3
+        ports: ['5432:5432']
+        env:
+          POSTGRES_DB: fms_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd backend || exit 0
+          npm ci
+
+      - name: Wait for Postgres availability
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
+
+      - name: Run DB migrations
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/fms_test
+        run: |
+          cd backend
+          npm run migrate
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/fms_test
+        run: |
+          cd backend
+          npm test

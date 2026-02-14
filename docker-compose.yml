@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_DB: fms
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/fms
+      JWT_SECRET: change-this-secret
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    command: ["sh", "-c", "node dist/main.js 2>&1 | tee /tmp/backend.log; sleep infinity"]
+
+  frontend:
+    build:
+      context: ./frontend/dispatcher
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

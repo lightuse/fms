@@ -1,0 +1,33 @@
+name: Sync Skills Manifest
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  sync-skills:
+    name: Check skills docs sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Run skills sync script
+        run: node .github/skills/sync_skills.js
+
+      - name: Fail if skills files changed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Skills files are out of sync. Run 'node .github/skills/sync_skills.js' locally and commit the changes.";
+            git --no-pager status --porcelain || true
+            exit 1
+          else
+            echo "Skills manifest is up-to-date.";
+          fi

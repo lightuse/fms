@@ -17,7 +17,6 @@ import { Incident } from './incidents/incident.entity';
     }),
     TypeOrmModule.forFeature([Incident]),
   ],
-  controllers: [IncidentsController],
   controllers: [IncidentsController, UnitsController],
   providers: [IncidentsService, UnitsService],
 })

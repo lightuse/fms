@@ -82,7 +82,7 @@ Independent test criteria: Given seeded unit positions, the candidate search ret
 - [ ] T037 [P] Add Redis Pub/Sub integration and verification tests (`specs/001-fms-core/tests/redis_pubsub_check.md`)
 - [ ] T038 [P] Implement notification abstraction for FCM integration (`backend/src/services/notifications/*`)
 
-- [ ] T039 [US2] Add Flutter mobile stub for receiving dispatch and updating status (`specs/001-fms-core/quickstart/mobile_stub/`)
+- [ ] T039 [US2] Add React Native mobile stub for receiving dispatch and updating status (`specs/001-fms-core/quickstart/mobile_stub/`)
 - [ ] T040 [US2] Implement GPS ping endpoint and persistence (`backend/src/controllers/units_controller.ts`)
 - [ ] T041 [US2] Implement offline queue sync strategy document and sample (`specs/001-fms-core/quickstart/mobile_offline.md`)
 
