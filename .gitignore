@@ -7,9 +7,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Package manager lockfiles (optional to track)
-package-lock.json
-yarn.lock
+# Package manager lockfiles (should be committed to repo)
+# package-lock.json
+# yarn.lock
 
 # Build output
 dist/
