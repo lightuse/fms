@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 import { Controller, Get, Post, Body } from '@nestjs/common';
+=======
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+>>>>>>> origin/001-create-frontend
 import { IncidentsService } from './incidents.service';
 import { CreateIncidentDto } from './dto/create-incident.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -22,4 +26,13 @@ export class IncidentsController {
   async create(@Body() body: CreateIncidentDto) {
     return this.svc.create(body);
   }
+<<<<<<< HEAD
+=======
+
+  @Post(':id/assign')
+  @ApiOperation({ summary: 'Assign units to an incident' })
+  async assign(@Param('id') id: string, @Body() body: { unitIds: string[]; actorId?: string }) {
+    return this.svc.assignUnits(id, body.unitIds, body.actorId);
+  }
+>>>>>>> origin/001-create-frontend
 }

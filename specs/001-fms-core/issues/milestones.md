@@ -16,7 +16,11 @@
 - W5-T5.3: FCM 統合 (specs/001-fms-core/issues/W5-T5.3-fcm.md)
 
 ## W6 - Mobile
+<<<<<<< HEAD
 - W6-T6.1: Flutter 指令画面 (specs/001-fms-core/issues/W6-T6.1-flutter-ui.md)
+=======
+- W6-T6.1: React Native 指令画面 (specs/001-fms-core/issues/W6-T6.1-React Native-ui.md)
+>>>>>>> origin/001-create-frontend
 - W6-T6.2: GPS 送信 (specs/001-fms-core/issues/W6-T6.2-gps.md)
 - W6-T6.3: オフライン対応 (specs/001-fms-core/issues/W6-T6.3-offline.md)
 

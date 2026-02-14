@@ -3,6 +3,7 @@ info:
   title: FMS Core API
   version: 0.1.0
   description: >-
+<<<<<<< HEAD
     API surface for MVP core workflows: incidents, units, dispatches, realtime notifications.
     Tenant propagation is handled via a validated JWT claim `tenant_id` (middleware MUST set DB session
     tenant from this claim). See spec: `specs/001-fms-core/spec.md` for details.
@@ -15,6 +16,26 @@ paths:
     post:
       summary: Create an incident
       tags: [Incidents]
+=======
+    Fire Management System (FMS) core API contract for MVP (incidents, units, dispatches).
+    API surface for core workflows and realtime notifications. Tenant propagation is handled via a
+    validated JWT claim `tenant_id` (middleware MUST set DB session tenant from this claim).
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /v1/incidents:
+    post:
+      summary: Create an incident (tenant taken from JWT)
+      tags: [Incidents]
+      security:
+        - bearerAuth: []
+>>>>>>> origin/001-create-frontend
       requestBody:
         required: true
         content:
@@ -45,9 +66,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Incident'
+<<<<<<< HEAD
   /v1/incidents/{id}/dispatch:
     post:
       summary: Dispatch a unit to an incident
+=======
+
+  /v1/incidents/{id}/dispatch:
+    post:
+      summary: Dispatch a unit to an incident
+      security:
+        - bearerAuth: []
+>>>>>>> origin/001-create-frontend
       parameters:
         - name: id
           in: path
@@ -66,9 +96,18 @@ paths:
       responses:
         '200':
           description: Dispatch accepted
+<<<<<<< HEAD
   /v1/units:
     get:
       summary: List units (filter by proximity)
+=======
+
+  /v1/units:
+    get:
+      summary: List units (filter by proximity)
+      security:
+        - bearerAuth: []
+>>>>>>> origin/001-create-frontend
       parameters:
         - name: lat
           in: query
@@ -85,6 +124,7 @@ paths:
       responses:
         '200':
           description: List of units
+<<<<<<< HEAD
 components:
   schemas:
     Incident:
@@ -110,12 +150,284 @@ components:
         created_at:
           type: string
           format: date-time
+=======
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Unit'
+
+components:
+>>>>>>> origin/001-create-frontend
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+<<<<<<< HEAD
+=======
+
+  schemas:
+    Tenant:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+
+    Point:
+      type: object
+      properties:
+        type:
+          type: string
+          example: Point
+        coordinates:
+          type: array
+          items:
+            type: number
+          example: [139.767, 35.681]
+
+    Incident:
+      type: object
+      required: [id, location, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        reporter_id:
+          type: string
+          format: uuid
+        location:
+          $ref: '#/components/schemas/Point'
+        location_text:
+          type: string
+        type:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high]
+        notes:
+          type: string
+        status:
+          type: string
+          enum: [reported, dispatched, enroute, onscene, resolved]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Unit:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        position:
+          $ref: '#/components/schemas/Point'
+        status:
+          type: string
+          enum: [available, dispatched, enroute, busy, offline]
+        capabilities:
+          type: object
+          additionalProperties: true
+
+    Dispatch:
+      type: object
+      required: [id, incident_id, unit_id]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        incident_id:
+          type: string
+          format: uuid
+        unit_id:
+          type: string
+          format: uuid
+        issued_by:
+          type: string
+          format: uuid
+        issued_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [issued, accepted, acknowledged, arrived, cancelled]
+
+                                properties:
+                                  location:
+                                    $ref: '#/components/schemas/Point'
+                                  location_text:
+                                    type: string
+                                  type:
+                                    type: string
+                                  severity:
+                                    type: string
+                                    enum: [low, medium, high]
+                                  notes:
+                                    type: string
+                                required: [location]
+                        responses:
+                          '201':
+                            description: created incident
+                            content:
+                              application/json:
+                                schema:
+                                  $ref: '#/components/schemas/Incident'
+
+                    /incidents/{id}:
+                      get:
+                        summary: Get incident by id (tenant-scoped)
+                        security:
+                          - bearerAuth: []
+                        parameters:
+                          - name: id
+                            in: path
+                            required: true
+                            schema:
+                              type: string
+                              format: uuid
+                        responses:
+                          '200':
+                            description: incident
+                            content:
+                              application/json:
+                                schema:
+                                  $ref: '#/components/schemas/Incident'
+                          '404':
+                            description: not found
+
+                    /units:
+                      get:
+                        summary: List units for the current tenant
+                        security:
+                          - bearerAuth: []
+                        parameters:
+                          - name: near
+                            in: query
+                            description: near=lon,lat to filter by proximity
+                            schema:
+                              type: string
+                        responses:
+                          '200':
+                            description: array of units
+                            content:
+                              application/json:
+                                schema:
+                                  type: array
+                                  items:
+                                    $ref: '#/components/schemas/Unit'
+
+                    /dispatches:
+                      post:
+                        summary: Create a dispatch for an incident -> unit
+                        security:
+                          - bearerAuth: []
+                        requestBody:
+                          required: true
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                required: [incident_id, unit_id]
+                                properties:
+                                  incident_id:
+                                    type: string
+                                    format: uuid
+                                  unit_id:
+                                    type: string
+                                    format: uuid
+                        responses:
+                          '201':
+                            description: created dispatch
+                            content:
+                              application/json:
+                                schema:
+                                  $ref: '#/components/schemas/Dispatch'
+
+                    /dispatches/{id}:
+                      get:
+                        summary: Get dispatch by id
+                        security:
+                          - bearerAuth: []
+                        parameters:
+                          - name: id
+                            in: path
+                            required: true
+                            schema:
+                              type: string
+                              format: uuid
+                        responses:
+                          '200':
+                            description: dispatch
+                            content:
+                              application/json:
+                                schema:
+                                  $ref: '#/components/schemas/Dispatch'
+
+                    /auth/refresh:
+                      post:
+                        summary: Refresh token (delegated to Keycloak in production)
+                        requestBody:
+                          required: true
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                properties:
+                                  refresh_token:
+                                    type: string
+                        responses:
+                          '200':
+                            description: tokens
+                            content:
+                              application/json:
+                                schema:
+                                  type: object
+                                  properties:
+                                    access_token:
+                                      type: string
+                                    refresh_token:
+                                      type: string
+=======
+>>>>>>> origin/001-create-frontend
       description: >-
         JWT bearer token. Token MUST be validated (issuer/audience/expiry) and MUST include
         `tenant_id` claim containing the UUID of the tenant. The application middleware is
         responsible for setting the DB session tenant (e.g. `SELECT fms_set_current_tenant(...)`).
+<<<<<<< HEAD
+=======
+>>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
+>>>>>>> origin/001-create-frontend

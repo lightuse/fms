@@ -1,0 +1,9 @@
+id: integration_testing
+name: Integration testing
+description: |
+  統合テスト環境の構築手順、テスト DB の初期化、テストケース作成、CI での実行方法。
+owner: testing-team
+related_files:
+  - tests/integration/
+  - scripts/setup_test_db.sh
+tags: [testing, integration, ci]

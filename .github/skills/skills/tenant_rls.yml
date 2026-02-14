@@ -1,0 +1,9 @@
+id: tenant_rls
+name: Tenant RLS
+description: |
+  テナント分離 (Row-Level Security) ポリシー設計、テスト手順、テナント識別ミドルウェアの実装要点。
+owner: security-team
+related_files:
+  - db/migrations/0003_enable_rls_tenants.sql
+  - src/middleware/tenant.middleware.ts
+tags: [rls, multi-tenant, security]

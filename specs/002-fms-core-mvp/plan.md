@@ -39,7 +39,11 @@ backend/
 │   └── main.ts
 └── tests/
 
+<<<<<<< HEAD
 Mobile client (integration): `mobile/` (external Flutter client; integration tests simulate mobile actions).
+=======
+Mobile client (integration): `mobile/` (external React Native client; integration tests simulate mobile actions).
+>>>>>>> origin/001-create-frontend
 
 **Structure Decision**: Use existing `backend/` for API and tests; create `specs/002-fms-core-mvp/` artifacts for planning and acceptance fixtures.
 

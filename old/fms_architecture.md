@@ -20,7 +20,7 @@ graph TB
 
     subgraph Presentation["🖥️ Presentation Layer"]
         WEB[Web Application<br/>React.js/Next.js]
-        MOBILE[Mobile Apps<br/>Flutter/React Native]
+        MOBILE[Mobile Apps<br/>React Native]
         DESKTOP[Desktop<br/>PWA]
     end
 
@@ -149,7 +149,7 @@ sequenceDiagram
 | Category | Technology | Purpose |
 |---------|------|---------|
 | **Web Application** | React.js / Next.js | Command center dashboards, admin console |
-| **Mobile Apps** | Flutter / React Native | Field personnel app, inspection checklists |
+| **Mobile Apps** | React Native | Field personnel app, inspection checklists |
 | **Mapping** | Leaflet / OpenStreetMap | GIS mapping, route visualization |
 | **UI Components** | Tailwind CSS / Material UI | Responsive design framework |
 
@@ -627,7 +627,7 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph MobileApp["Mobile Application (Flutter/React Native)"]
+    subgraph MobileApp["Mobile Application (React Native)"]
         UI[User Interface Layer]
         STATE[State Management<br/>Redux/Bloc]
         OFFLINE[Offline Storage<br/>SQLite/Realm]

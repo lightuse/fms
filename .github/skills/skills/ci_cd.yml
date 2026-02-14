@@ -1,0 +1,9 @@
+id: ci_cd
+name: CI / CD
+description: |
+  継続的インテグレーションとデプロイのワークフロー概要、推奨ジョブと環境変数、シークレット管理の注意点。
+owner: devops-team
+related_files:
+  - .github/workflows/
+  - specs/
+tags: [ci, cd, workflows]

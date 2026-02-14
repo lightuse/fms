@@ -15,7 +15,7 @@
 
 ## 2. 推奨技術スタック (PDF Section 11準拠)
 *   **Frontend (Web):** Next.js (React), OpenStreetMap (Leaflet/MapLibre)
-*   **Mobile App:** Flutter (iOS/Android両対応)
+*   **Mobile App:** React Native
 *   **Backend:** Node.js (NestJS)
 *   **Database:** PostgreSQL + PostGIS (地理空間データ), Redis (リアルタイム位置情報/キャッシュ)
 *   **Infra/Security:** Docker, Keycloak (SSO/Identity Management)
@@ -46,7 +46,7 @@
 
 | 週 | カテゴリ | タスク詳細 | 成果物 |
 | :--- | :--- | :--- | :--- |
-| **W6** | **モバイルアプリ** | **Flutter実装:** ログイン画面、指令受信画面の実装。<br>**プッシュ通知:** 指令受信時のアラート吹鳴。<br>**ステータス更新:** 「出動(En Route)」「現着(On Scene)」「鎮火(Contained)」ボタンの実装とAPI連携。 | 隊員用アプリ (α版) |
+| **W6** | **モバイルアプリ** | **React Native実装:** ログイン画面、指令受信画面の実装。<br>**プッシュ通知:** 指令受信時のアラート吹鳴。<br>**ステータス更新:** 「出動(En Route)」「現着(On Scene)」「鎮火(Contained)」ボタンの実装とAPI連携。 | 隊員用アプリ (α版) |
 | **W7** | **動態管理 (AVL)** | **GPS追跡:** モバイルアプリからの定期的な位置情報送信（バックグラウンド処理）。<br>**司令室反映:** 受信したGPSデータを司令室マップ上のアイコン位置にリアルタイム反映。<br>**オフライン対応:** 通信断絶時のデータローカル保存と再接続時送信の実装。 | 動態管理システム |
 
 ### フェーズ 4: 統合テストとデプロイ (Week 8)

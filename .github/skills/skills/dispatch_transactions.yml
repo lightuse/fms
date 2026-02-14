@@ -1,0 +1,9 @@
+id: dispatch_transactions
+name: Dispatch transactions
+description: |
+  配車トランザクションの原子性、悲観/楽観ロック、イベント発行と検証フロー、トランザクション境界の設計。
+owner: dispatch-team
+related_files:
+  - src/modules/dispatch/
+  - tests/integration/test_dispatch_flow.spec.ts
+tags: [dispatch, tx, transactions]

@@ -1,0 +1,9 @@
+id: incidents_api
+name: Incidents API
+description: |
+  インシデント関連のデータモデル、エンドポイント設計、DTO、コントローラとサービスの分離、テストケース。
+owner: incidents-team
+related_files:
+  - src/incidents/
+  - specs/001-fms-core/contracts/openapi.yaml
+tags: [api, incidents, http]

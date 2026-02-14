@@ -2,10 +2,18 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2020",
+<<<<<<< HEAD
     "lib": ["es2020"],
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
+=======
+    "lib": ["es2020", "DOM"],
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "skipLibCheck": true,
+>>>>>>> origin/001-create-frontend
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

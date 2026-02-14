@@ -20,7 +20,7 @@ graph TB
 
     subgraph Presentation["🖥️ プレゼンテーション層"]
         WEB[Webアプリ<br/>React.js/Next.js]
-        MOBILE[モバイルアプリ<br/>Flutter/React Native]
+        MOBILE[モバイルアプリ<br/>React Native]
         DESKTOP[デスクトップ<br/>PWA]
     end
 
@@ -149,7 +149,7 @@ sequenceDiagram
 | カテゴリ | 技術 | 用途 |
 |---------|------|------|
 | **Webアプリ** | React.js / Next.js | 指令センターダッシュボード、管理コンソール |
-| **モバイルアプリ** | Flutter / React Native | 現場隊員用アプリ、査察チェックリスト |
+| **モバイルアプリ** | React Native | 現場隊員用アプリ、査察チェックリスト |
 | **地図表示** | Leaflet / OpenStreetMap | GISマッピング、ルート表示 |
 | **UI コンポーネント** | Tailwind CSS / Material UI | レスポンシブデザイン |
 

@@ -1,0 +1,9 @@
+id: local_dev
+name: Local dev / Docker / WSL
+description: |
+  ローカル開発環境のセットアップ（WSL/Docker）、よく使うコマンド、デバッグのヒント。
+owner: devops-team
+related_files:
+  - README.md
+  - scripts/
+tags: [dev, docker, wsl]

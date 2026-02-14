@@ -23,7 +23,11 @@ Generated: 2026-02-09
 
 3. Real-time transport
    - Decision: WebSocket (Socket.IO on NestJS) for MVP; Redis Pub/Sub for server-side fanout across instances.
+<<<<<<< HEAD
    - Rationale: Socket.IO has broad client support (web + flutter with socket_io_client), Redis provides cross-process pubsub.
+=======
+   - Rationale: Socket.IO has broad client support (web + React Native with socket_io_client), Redis provides cross-process pubsub.
+>>>>>>> origin/001-create-frontend
    - Alternatives: MQTT, WebRTC (not needed)
 
 4. Offline sync and conflict resolution

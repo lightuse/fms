@@ -1,0 +1,9 @@
+id: database_migrations
+name: Database migrations
+description: |
+  マイグレーションの作成・運用手順、命名規則、ロールバック方針、`db/migrations` の扱い。
+owner: backend-team
+related_files:
+  - db/migrations/
+  - scripts/run-migrations.sh
+tags: [migrations, db, sql]

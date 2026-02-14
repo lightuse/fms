@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: FMS Frontend API (spec sketch)
+  version: 0.1.0
+  description: API contract skeleton for the Dispatcher frontend (incidents, units, dispatch, realtime)
+servers:
+  - url: /api
+paths:
+  /incidents:
+    get:
+      summary: List incidents
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+            default: 25
+        - in: query
+          name: since
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Incident'
+                  total:
+                    type: integer
+  /incidents/{incidentId}:
+    get:
+      summary: Get incident by id
+      parameters:
+        - in: path
+          name: incidentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+  /units:
+    get:
+      summary: List units
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [idle, active, dispatched]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Unit'
+  /units/{unitId}:
+    get:
+      summary: Get unit by id
+      parameters:
+        - in: path
+          name: unitId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unit'
+  /dispatch:
+    post:
+      summary: Assign a unit to an incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispatchAssignmentCreate'
+      responses:
+        '201':
+          description: Assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchAssignment'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Incident:
+      type: object
+      properties:
+        id:
+          type: string
+        occurred_at:
+          type: string
+          format: date-time
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        priority:
+          type: string
+          enum: [low, medium, high]
+        summary:
+          type: string
+        status:
+          type: string
+          enum: [open, assigned, closed]
+    Unit:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [idle, active, dispatched]
+        last_seen:
+          type: string
+          format: date-time
+    DispatchAssignmentCreate:
+      type: object
+      required: [incident_id, unit_id]
+      properties:
+        incident_id:
+          type: string
+        unit_id:
+          type: string
+        assigned_by:
+          type: string
+    DispatchAssignment:
+      type: object
+      properties:
+        id:
+          type: string
+        incident_id:
+          type: string
+        unit_id:
+          type: string
+        assigned_at:
+          type: string
+          format: date-time
+        assigned_by:
+          type: string
+        status:
+          type: string
+          enum: [active, cancelled, completed]
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+  security:
+    - bearerAuth: []
+
+x-websocket-endpoint: /ws

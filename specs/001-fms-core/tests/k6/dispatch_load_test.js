@@ -14,8 +14,49 @@ export const options = {
 };
 
 // Set BASE to include the API prefix so paths align with OpenAPI server: http://localhost:3000/api
+<<<<<<< HEAD
 const BASE = __ENV.K6_BASE_URL || 'http://localhost:3000/api';
+=======
+<<<<<<< HEAD
+const BASE = __ENV.K6_BASE_URL || 'http://localhost:3000';
+=======
+const BASE = __ENV.K6_BASE_URL || 'http://localhost:3000/api';
+>>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
+>>>>>>> origin/001-create-frontend
 const TENANT_ID = __ENV.K6_TENANT_ID || '11111111-1111-1111-1111-111111111111';
+const AUTH = __ENV.K6_AUTH || '';
+
+function headers() {
+  const h = { 'Content-Type': 'application/json' };
+  if (AUTH) h['Authorization'] = AUTH;
+  return h;
+}
+<<<<<<< HEAD
+
+export default function () {
+  // 1) Create an incident
+  const incidentPayload = JSON.stringify({
+    tenant_id: TENANT_ID,
+    type: 'Fire',
+    severity: 'High',
+=======
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export const options = {
+  stages: [
+    { duration: '30s', target: 10 }, // ramp-up to 10 vus
+    { duration: '1m', target: 10 }, // steady
+    { duration: '20s', target: 0 }, // ramp-down
+  ],
+  thresholds: {
+    http_req_failed: ['rate<0.01'], // <1% errors
+    http_req_duration: ['p(95)<500'], // 95% requests < 500ms
+  },
+};
+
+// Set BASE to include the API prefix so paths align with OpenAPI server: http://localhost:3000/api
+const BASE = __ENV.K6_BASE_URL || 'http://localhost:3000/api';
 const AUTH = __ENV.K6_AUTH || '';
 
 function headers() {
@@ -25,11 +66,11 @@ function headers() {
 }
 
 export default function () {
-  // 1) Create an incident
+  // 1) Create an incident (tenant is taken from JWT in AUTH)
   const incidentPayload = JSON.stringify({
-    tenant_id: TENANT_ID,
     type: 'Fire',
-    severity: 'High',
+    severity: 'high',
+>>>>>>> origin/001-create-frontend
     location: { type: 'Point', coordinates: [139.76705, 35.68145] },
     location_text: 'Load test incident',
     notes: 'k6 generated',
@@ -44,7 +85,10 @@ export default function () {
   try {
     incidentId = JSON.parse(res.body).id;
   } catch (e) {
+<<<<<<< HEAD
     // fallback: parse Location header or skip
+=======
+>>>>>>> origin/001-create-frontend
     incidentId = res.headers['Location'] || null;
   }
 
@@ -59,7 +103,10 @@ export default function () {
 
   // 3) If we obtained an incident id and a unit id, dispatch
   if (incidentId) {
+<<<<<<< HEAD
     // pick a unit from response if available
+=======
+>>>>>>> origin/001-create-frontend
     let unitId = null;
     try {
       const body = JSON.parse(res.body || '{}');
@@ -68,7 +115,11 @@ export default function () {
     } catch (e) {}
 
     if (unitId) {
+<<<<<<< HEAD
       const dispatchPayload = JSON.stringify({ unit_id: unitId, issued_by: null });
+=======
+      const dispatchPayload = JSON.stringify({ unit_id: unitId });
+>>>>>>> origin/001-create-frontend
       res = http.post(`${BASE}/v1/incidents/${incidentId}/dispatch`, dispatchPayload, { headers: headers() });
       check(res, { 'dispatch status 201': (r) => r.status === 201 || r.status === 200 });
     }
