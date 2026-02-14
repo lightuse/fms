@@ -41,6 +41,6 @@
     "@types/validator": "^13.7.3",
 >>>>>>> origin/001-create-frontend
     "@types/jsonwebtoken": "^9.0.0",
-    "vitest": "^0.34.0"
+    "vitest": "^4.0.18"
   }
 }
