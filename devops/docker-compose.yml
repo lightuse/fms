@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: fms_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fms
+    ports:
+      - '5432:5432'
+    volumes:
+      - fms_db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6-alpine
+    container_name: fms_redis
+    ports:
+      - '6379:6379'
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: fms_keycloak
+    environment:
+      KC_DB: h2
+      KC_HTTP_RELATIVE_PATH: /auth
+    command: start-dev
+    ports:
+      - '8080:8080'
+
+  backend:
+    image: node:20-alpine
+    container_name: fms_backend
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
+    command: sh -c "while sleep 3600; do :; done"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/fms
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  fms_db_data:

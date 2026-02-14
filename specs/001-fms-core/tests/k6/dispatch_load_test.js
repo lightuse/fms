@@ -14,7 +14,11 @@ export const options = {
 };
 
 // Set BASE to include the API prefix so paths align with OpenAPI server: http://localhost:3000/api
+<<<<<<< HEAD
 const BASE = __ENV.K6_BASE_URL || 'http://localhost:3000';
+=======
+const BASE = __ENV.K6_BASE_URL || 'http://localhost:3000/api';
+>>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
 const TENANT_ID = __ENV.K6_TENANT_ID || '11111111-1111-1111-1111-111111111111';
 const AUTH = __ENV.K6_AUTH || '';
 
@@ -27,6 +31,7 @@ function headers() {
 export default function () {
   // 1) Create an incident
   const incidentPayload = JSON.stringify({
+<<<<<<< HEAD
     // tenant_id must come from JWT claims (AUTH); do not send tenant_id in body
     type: 'Fire',
     severity: 'high',
@@ -35,6 +40,17 @@ export default function () {
   });
 
   let res = http.post(`${BASE}/incidents`, incidentPayload, { headers: headers() });
+=======
+    tenant_id: TENANT_ID,
+    type: 'Fire',
+    severity: 'High',
+    location: { type: 'Point', coordinates: [139.76705, 35.68145] },
+    location_text: 'Load test incident',
+    notes: 'k6 generated',
+  });
+
+  let res = http.post(`${BASE}/v1/incidents`, incidentPayload, { headers: headers() });
+>>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
   check(res, {
     'create incident status 201': (r) => r.status === 201 || r.status === 200,
   });
@@ -50,8 +66,13 @@ export default function () {
   // 2) Query nearby units
   const lat = 35.68145;
   const lon = 139.76705;
+<<<<<<< HEAD
   const radius_m = 5000; // meters
   res = http.get(`${BASE}/units?near=${lon},${lat}&radius=${radius_m}`, { headers: headers() });
+=======
+  const radius_km = 5; // kilometers
+  res = http.get(`${BASE}/v1/units?lat=${lat}&lon=${lon}&radius_km=${radius_km}`, { headers: headers() });
+>>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
   check(res, {
     'nearby units 200': (r) => r.status === 200,
   });
@@ -67,8 +88,13 @@ export default function () {
     } catch (e) {}
 
     if (unitId) {
+<<<<<<< HEAD
       const dispatchPayload = JSON.stringify({ incident_id: incidentId, unit_id: unitId });
       res = http.post(`${BASE}/dispatches`, dispatchPayload, { headers: headers() });
+=======
+      const dispatchPayload = JSON.stringify({ unit_id: unitId, issued_by: null });
+      res = http.post(`${BASE}/v1/incidents/${incidentId}/dispatch`, dispatchPayload, { headers: headers() });
+>>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
       check(res, { 'dispatch status 201': (r) => r.status === 201 || r.status === 200 });
     }
   }
