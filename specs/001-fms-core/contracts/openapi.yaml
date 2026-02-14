@@ -2,30 +2,25 @@ openapi: 3.0.3
 info:
   title: FMS Core API
   version: 0.1.0
-<<<<<<< HEAD
-  description: |
-    Fire Management System (FMS) core API contract for MVP (incidents, units, dispatches).
-    Authentication via JWT Bearer; `tenant_id` must be provided in JWT claims and is authoritative.
-
-servers:
-  - url: http://localhost:3000
-    description: Local development server
-
-components:
-=======
   description: >-
-    API surface for MVP core workflows: incidents, units, dispatches, realtime notifications.
-    Tenant propagation is handled via a validated JWT claim `tenant_id` (middleware MUST set DB session
-    tenant from this claim). See spec: `specs/001-fms-core/spec.md` for details.
+    Fire Management System (FMS) core API contract for MVP (incidents, units, dispatches).
+    API surface for core workflows and realtime notifications. Tenant propagation is handled via a
+    validated JWT claim `tenant_id` (middleware MUST set DB session tenant from this claim).
+
 servers:
   - url: http://localhost:3000/api
+    description: Local development server
+
 security:
   - bearerAuth: []
+
 paths:
   /v1/incidents:
     post:
-      summary: Create an incident
+      summary: Create an incident (tenant taken from JWT)
       tags: [Incidents]
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -56,9 +51,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Incident'
+
   /v1/incidents/{id}/dispatch:
     post:
       summary: Dispatch a unit to an incident
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -77,9 +75,12 @@ paths:
       responses:
         '200':
           description: Dispatch accepted
+
   /v1/units:
     get:
       summary: List units (filter by proximity)
+      security:
+        - bearerAuth: []
       parameters:
         - name: lat
           in: query
@@ -96,38 +97,19 @@ paths:
       responses:
         '200':
           description: List of units
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Unit'
+
 components:
-  schemas:
-    Incident:
-      type: object
-      properties:
-        id:
-          type: string
-        location_text:
-          type: string
-        location:
-          type: object
-          properties:
-            lat:
-              type: number
-            lon:
-              type: number
-        type:
-          type: string
-        severity:
-          type: string
-        status:
-          type: string
-        created_at:
-          type: string
-          format: date-time
->>>>>>> a8ff47e (feat(001-fms-core): infra + openapi + migrations + k6 path fixes; add docker-compose and migration runner)
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-<<<<<<< HEAD
 
   schemas:
     Tenant:
@@ -179,15 +161,24 @@ components:
           format: uuid
         location:
           $ref: '#/components/schemas/Point'
+        location_text:
+          type: string
+        type:
+          type: string
         severity:
           type: string
           enum: [low, medium, high]
+        notes:
+          type: string
         status:
           type: string
           enum: [reported, dispatched, enroute, onscene, resolved]
-        properties:
-          type: object
-          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     Unit:
       type: object
@@ -238,166 +229,6 @@ components:
           type: string
           enum: [issued, accepted, acknowledged, arrived, cancelled]
 
-security:
-  - bearerAuth: []
-
-paths:
-  /incidents:
-    get:
-      summary: List incidents for the current tenant
-      responses:
-        '200':
-          description: array of incidents
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  openapi: 3.0.3
-                  info:
-                    title: FMS Core API
-                    version: 0.1.0
-                    description: >-
-                      Fire Management System (FMS) core API contract for MVP (incidents, units, dispatches).
-                      Tenant propagation is handled via a validated JWT claim `tenant_id`. The application
-                      MUST set the DB session tenant from this claim before running tenant-scoped queries.
-
-                  servers:
-                    - url: http://localhost:3000
-                      description: Local development server
-
-                  components:
-                    securitySchemes:
-                      bearerAuth:
-                        type: http
-                        scheme: bearer
-                        bearerFormat: JWT
-
-                    schemas:
-                      Point:
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                            example: Point
-                          coordinates:
-                            type: array
-                            items:
-                              type: number
-                            example: [139.767, 35.681]
-
-                      Incident:
-                        type: object
-                        required: [id, location, status]
-                        properties:
-                          id:
-                            type: string
-                            format: uuid
-                          tenant_id:
-                            type: string
-                            format: uuid
-                          creator_id:
-                            type: string
-                            format: uuid
-                          location:
-                            $ref: '#/components/schemas/Point'
-                          location_text:
-                            type: string
-                          type:
-                            type: string
-                          severity:
-                            type: string
-                            enum: [low, medium, high]
-                          notes:
-                            type: string
-                          status:
-                            type: string
-                            enum: [Open, Dispatched, Enroute, OnScene, Resolved]
-                          created_at:
-                            type: string
-                            format: date-time
-                          updated_at:
-                            type: string
-                            format: date-time
-
-                      Unit:
-                        type: object
-                        required: [id]
-                        properties:
-                          id:
-                            type: string
-                            format: uuid
-                          tenant_id:
-                            type: string
-                            format: uuid
-                          name:
-                            type: string
-                          type:
-                            type: string
-                          position:
-                            $ref: '#/components/schemas/Point'
-                          status:
-                            type: string
-                            enum: [Available, Assigned, Enroute, OnScene, Contained, Offline]
-                          capabilities:
-                            type: object
-                            additionalProperties: true
-
-                      Dispatch:
-                        type: object
-                        required: [id, incident_id, unit_id]
-                        properties:
-                          id:
-                            type: string
-                            format: uuid
-                          tenant_id:
-                            type: string
-                            format: uuid
-                          incident_id:
-                            type: string
-                            format: uuid
-                          unit_id:
-                            type: string
-                            format: uuid
-                          issued_by:
-                            type: string
-                            format: uuid
-                          issued_at:
-                            type: string
-                            format: date-time
-                          status:
-                            type: string
-                            enum: [issued, accepted, acknowledged, arrived, cancelled]
-
-                  security:
-                    - bearerAuth: []
-
-                  paths:
-                    /incidents:
-                      get:
-                        summary: List incidents for the current tenant
-                        security:
-                          - bearerAuth: []
-                        responses:
-                          '200':
-                            description: array of incidents
-                            content:
-                              application/json:
-                                schema:
-                                  type: array
-                                  items:
-                                    $ref: '#/components/schemas/Incident'
-
-                      post:
-                        summary: Create an incident (tenant taken from JWT)
-                        security:
-                          - bearerAuth: []
-                        requestBody:
-                          required: true
-                          content:
-                            application/json:
-                              schema:
-                                type: object
                                 properties:
                                   location:
                                     $ref: '#/components/schemas/Point'
