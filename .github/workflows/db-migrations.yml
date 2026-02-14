@@ -1,0 +1,101 @@
+name: DB Migrations & RLS Tests
+
+on:
+  pull_request:
+    paths:
+      - 'specs/001-fms-core/db/**'
+      - '.github/workflows/db-migrations.yml'
+
+jobs:
+  db-migrate-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgis:
+        image: postgis/postgis:15-3.3
+        env:
+          POSTGRES_DB: fms
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432
+        options: >-
+          --health-cmd pg_isready --health-interval=5s --health-timeout=2s --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start services with docker-compose (if present)
+        run: |
+          if [ -f docker-compose.yml ]; then
+            echo "docker-compose.yml found, starting services"
+            docker compose up -d || docker-compose up -d || true
+            sleep 5
+          else
+            echo "No docker-compose.yml found, skipping"
+          fi
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for postgres..."
+            sleep 1
+          done
+        env:
+          PGPASSWORD: postgres
+
+      - name: Install psql client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Reset DB to clean state (drop & recreate public schema)
+        env:
+          PGPASSWORD: postgres
+        run: |
+          echo "Resetting DB to clean state"
+          psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS fms;"
+          psql -h localhost -U postgres -d postgres -c "CREATE DATABASE fms;"
+          # Wait a moment for new DB to be available
+          until pg_isready -h localhost -p 5432 -U postgres -d fms; do
+            echo "Waiting for fms database..."
+            sleep 1
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps and run node-pg-migrate (if backend exists)
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/fms
+        run: |
+          if [ -f backend/package.json ]; then
+            echo "backend/package.json found - running migrations"
+            cd backend
+            npm ci
+            npm run migrate
+          else
+            echo "backend/package.json not found - skipping node-pg-migrate"
+          fi
+
+      - name: Apply SQL migrations
+        run: |
+          PSQL_CONN="postgresql://postgres:postgres@localhost:5432/fms"
+          for f in $(ls specs/001-fms-core/db/*.sql | sort); do
+            echo "Applying $f"
+            psql "$PSQL_CONN" -f "$f"
+          done
+
+      - name: Run RLS tests
+        env:
+          PSQL_CONN: postgresql://postgres:postgres@localhost:5432/fms
+        run: |
+          chmod +x specs/001-fms-core/db/run_rls_tests.sh
+          specs/001-fms-core/db/run_rls_tests.sh
+
+      - name: Run backend unit tests (Vitest)
+        if: ${{ hashFiles('backend/**') != '' }}
+        run: |
+          cd backend || exit 0
+          npm ci
+          npm test --silent

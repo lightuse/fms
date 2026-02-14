@@ -1,0 +1,76 @@
+name: k6 Load Tests (optional)
+
+on:
+  push:
+    paths:
+      - 'specs/001-fms-core/tests/k6/**'
+  pull_request:
+    paths:
+      - 'specs/001-fms-core/tests/k6/**'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Base URL to target (e.g., https://staging.example.com)'
+        required: true
+        default: 'http://localhost:3000'
+      tenant_id:
+        description: 'Tenant ID to use for tests'
+        required: false
+        default: '11111111-1111-1111-1111-111111111111'
+      auth:
+        description: 'Authorization header value (optional)'
+        required: false
+        default: ''
+      load_mode:
+        description: 'If true, run larger load profile'
+        required: false
+        default: 'false'
+
+jobs:
+  run-k6:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start services with docker-compose (if present)
+        run: |
+          if [ -f docker-compose.yml ]; then
+            echo "docker-compose.yml found, starting services"
+            docker compose up -d || docker-compose up -d || true
+            sleep 5
+          else
+            echo "No docker-compose.yml found, skipping"
+          fi
+
+      - name: Install k6
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg2 curl apt-transport-https
+          curl -s https://packagecloud.io/install/repositories/loadimpact/k6/script.deb.sh | sudo bash
+          sudo apt-get install -y k6
+
+      - name: Show environment
+        run: |
+          echo "K6_BASE_URL=$INPUT_BASE_URL"
+
+      - name: Run k6 scenario (default)
+        if: ${{ inputs.load_mode == 'false' }}
+        env:
+          K6_BASE_URL: ${{ inputs.base_url }}
+          K6_TENANT_ID: ${{ inputs.tenant_id }}
+          K6_AUTH: ${{ inputs.auth }}
+        run: |
+          k6 version
+          k6 run specs/001-fms-core/tests/k6/dispatch_load_test.js
+
+      - name: Run k6 scenario (load mode)
+        if: ${{ inputs.load_mode == 'true' }}
+        env:
+          K6_BASE_URL: ${{ inputs.base_url }}
+          K6_TENANT_ID: ${{ inputs.tenant_id }}
+          K6_AUTH: ${{ inputs.auth }}
+        run: |
+          # Override with heavier stages by using K6_OPTIONS env if needed
+          echo "Running load mode: larger VUs/stages"
+          k6 run specs/001-fms-core/tests/k6/dispatch_load_test.js
