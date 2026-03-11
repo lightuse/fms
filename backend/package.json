@@ -22,7 +22,7 @@
     "rxjs": "^7.0.0",
     "pg": "^8.0.0",
     "jsonwebtoken": "^9.0.0",
-    "@nestjs/swagger": "^6.0.0",
+    "@nestjs/swagger": "^11.2.6",
     "swagger-ui-express": "^4.6.3",
     "class-validator": "^0.14.0",
     "class-transformer": "^0.5.1",
